@@ -44,6 +44,7 @@ public class JobController{
 
         JobDto dto = new JobDto();
         dto.setGender(gender);
+        dto.setFields(fields);
         List<Job> jobs = jobService.getJobData(dto);
         String str = CommonUtil.convertToJson(jobs, fields);
         return new ResponseEntity<String>(str, HttpStatus.OK);

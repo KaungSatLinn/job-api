@@ -6,6 +6,7 @@ import com.example.jobapi.repository.JobRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -15,7 +16,8 @@ public class JobServiceImpl implements JobService{
 
     @Override
     public List<Job> getJobData(JobDto jobDto) {
-        List<Job> jobs = jobRepository.findJobDataByFilterdVal(jobDto);
+        List<Object[]> objects = jobRepository.findJobDataByFilterdVal(jobDto);
+        List<Job> jobs = new ArrayList<>();
         return jobs;
     }
 }

@@ -4,10 +4,7 @@ import com.example.jobapi.dto.JobDto;
 import com.example.jobapi.model.Job;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.Predicate;
-import jakarta.persistence.criteria.Root;
+import jakarta.persistence.criteria.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,9 +14,9 @@ public class JobRepositoryCustomImpl implements JobRepositoryCustom{
     private EntityManager entityManager;
 
     @Override
-    public List<Job> findJobDataByFilterdVal(JobDto jobDto) {
+    public List<Object[]> findJobDataByFilterdVal(JobDto jobDto) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-        CriteriaQuery<Job> query = cb.createQuery(Job.class);
+        CriteriaQuery<Object[]> query = cb.createQuery(Object[].class);
         Root<Job> root = query.from(Job.class);
 
         //Path<String> emailPath = user.get("email");
@@ -30,13 +27,15 @@ public class JobRepositoryCustomImpl implements JobRepositoryCustom{
             predicates.add(condition);
         }
         if(jobDto.getFields()!=null && !jobDto.getFields().isEmpty()){
-            for (String field : jobDto.getFields()) {
+            Selection<Object>[] selections = jobDto.getFields().stream()
+                    .map(root::get)
+                    .toArray(Selection[]::new);
+            query = query.select(cb.array(selections));
+                    //.where(cb.or(predicates.toArray(new Predicate[predicates.size()])));
 
-            }
         }
+        query.where(cb.or(predicates.toArray(new Predicate[predicates.size()])));
 
-        query.select(root)
-                .where(cb.or(predicates.toArray(new Predicate[predicates.size()])));
 
         return entityManager.createQuery(query)
                 .getResultList();

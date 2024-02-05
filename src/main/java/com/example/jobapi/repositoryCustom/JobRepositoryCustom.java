@@ -7,5 +7,5 @@ import org.springframework.data.domain.Sort;
 import java.util.List;
 
 public interface JobRepositoryCustom {
-    List<Job> findJobDataByFilterdVal(JobDto jobDto);
+    List<Object[]> findJobDataByFilterdVal(JobDto jobDto);
 }
