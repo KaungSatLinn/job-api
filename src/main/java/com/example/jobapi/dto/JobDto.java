@@ -1,24 +1,17 @@
-package com.example.jobapi.model;
+package com.example.jobapi.dto;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
-import java.time.LocalDateTime;
 
-@Entity
+import java.util.List;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonFilter("fieldsFilter")
-public class Job{
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class JobDto {
     private Long id;
     private String timestamp;
     private String employer;
@@ -32,4 +25,7 @@ public class Job{
     private String annualStockValue;
     private String gender;
     private String additionalComments;
+    private List<String> fields;
+    private String sort;
+    private String sortType;
 }
