@@ -7,17 +7,16 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
-public class BaseController<T> {
+public class BaseController {
 
-    protected ResponseEntity<ApiResponse<List<T>>> okResponse(String message, List<T> data) {
-
-        ApiResponse<List<T>> responses = ApiResponse.<List<T>>builder()
+    protected ResponseEntity<?> okResponse(String message, List<?> data) {
+        ApiResponse<List<?>> responses = ApiResponse.<List<?>>builder()
                 .message(message)
                 .data(data)
                 .build();
-
         return ResponseEntity.ok(responses);
     }
 }

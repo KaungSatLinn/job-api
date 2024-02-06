@@ -14,16 +14,18 @@ public class JobRepositoryCustomImpl implements JobRepositoryCustom{
     private EntityManager entityManager;
 
     @Override
-    public List<Object[]> findJobDataByFilterdVal(JobDto jobDto) {
+    public List<Object[]> findJobDataByFilteredVal(JobDto jobDto) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<Object[]> query = cb.createQuery(Object[].class);
         Root<Job> root = query.from(Job.class);
 
-        //Path<String> emailPath = user.get("email");
-
         List<Predicate> predicates = new ArrayList<>();
         if(jobDto.getGender()!= null && !jobDto.getGender().isEmpty()){
             Predicate condition = cb.and(cb.equal(root.get("gender"), jobDto.getGender()));
+            predicates.add(condition);
+        }
+        if(jobDto.getJobTitle()!=null && !jobDto.getJobTitle().isEmpty()){
+            Predicate condition = cb.and(cb.equal(root.get("jobTitle"), jobDto.getJobTitle()));
             predicates.add(condition);
         }
         if(jobDto.getFields()!=null && !jobDto.getFields().isEmpty()){
@@ -31,9 +33,8 @@ public class JobRepositoryCustomImpl implements JobRepositoryCustom{
                     .map(root::get)
                     .toArray(Selection[]::new);
             query = query.select(cb.array(selections));
-                    //.where(cb.or(predicates.toArray(new Predicate[predicates.size()])));
-
         }
+
         query.where(cb.or(predicates.toArray(new Predicate[predicates.size()])));
 
 

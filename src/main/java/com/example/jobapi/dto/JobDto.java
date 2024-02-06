@@ -20,6 +20,7 @@ public class JobDto {
     private String yearsAtEmployer;
     private String yearsOfEmployer;
     private String salary;
+    private String salaryComparison;
     private String signingBonus;
     private String annualBonus;
     private String annualStockValue;
@@ -27,5 +28,5 @@ public class JobDto {
     private String additionalComments;
     private List<String> fields;
     private String sort;
-    private String sortType;
+    private String sortTypes;
 }

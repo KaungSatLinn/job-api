@@ -6,5 +6,6 @@ import com.example.jobapi.model.Job;
 import java.util.List;
 
 public interface JobService {
-    List<Job> getJobData(JobDto jobDto);
+
+    List<Object[]> getFilteredJobDataWithDynamicCol(JobDto jobDto);
 }

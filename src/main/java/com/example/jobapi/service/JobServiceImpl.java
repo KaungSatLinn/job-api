@@ -15,9 +15,8 @@ public class JobServiceImpl implements JobService{
     private JobRepository jobRepository;
 
     @Override
-    public List<Job> getJobData(JobDto jobDto) {
-        List<Object[]> objects = jobRepository.findJobDataByFilterdVal(jobDto);
-        List<Job> jobs = new ArrayList<>();
+    public List<Object[]> getFilteredJobDataWithDynamicCol(JobDto jobDto){
+        List<Object[]> jobs = jobRepository.findJobDataByFilteredVal(jobDto);
         return jobs;
     }
 }

@@ -1,7 +1,9 @@
 package com.example.jobapi.controller;
 
 import com.example.jobapi.dto.JobDto;
+import com.example.jobapi.mapper.JobMapper;
 import com.example.jobapi.model.Job;
+import com.example.jobapi.response.ApiResponse;
 import com.example.jobapi.service.JobService;
 import com.example.jobapi.util.CommonUtil;
 import com.fasterxml.jackson.core.JsonGenerator;
@@ -24,29 +26,36 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1")
-public class JobController{
+public class JobController extends BaseController{
 
     @Autowired
     protected JobService jobService;
 
+    @Autowired
+    JobMapper jobMapper;
+
     @GetMapping("/job_data")
     public ResponseEntity<?> getJobData(@RequestParam(name = "salary", required = false) String minSalary,
                                         @RequestParam(name = "salary_comparison", required = false) String salaryComparison,
-                                        @RequestParam(name = "salary", required = false) String maxSalary,
                                         @RequestParam(name = "job_title", required = false) String jobTitles,
                                         @RequestParam(name = "gender", required = false) String gender,
                                         @RequestParam(name = "fields", required = false) List<String> fields,
                                         @RequestParam(name = "sort", required = false) String sort,
                                         @RequestParam(name = "sort_types", required = false) String sortTypes) throws JsonProcessingException {
 
-        JobDto dto = new JobDto();
-        dto.setGender(gender);
-        dto.setFields(fields);
-        List<Job> jobs = jobService.getJobData(dto);
-        String str = CommonUtil.convertToJson(jobs, fields);
-        return new ResponseEntity<String>(str, HttpStatus.OK);
+        JobDto dto = jobMapper.toJobDto(minSalary,salaryComparison,jobTitles,gender,fields,sort,sortTypes);
+
+        List<Object[]> jobs = jobService.getFilteredJobDataWithDynamicCol(dto);
+
+        if(fields==null || fields.isEmpty()){
+            fields = CommonUtil.getFieldNames(Job.class);
+        }
+        List<Map<String, Object>> resultList = CommonUtil.convertToMapList(jobs, fields);
+
+        return okResponse("list.retrieve.success", resultList);
     }
 }
