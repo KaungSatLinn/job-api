@@ -28,5 +28,5 @@ public class JobDto {
     private String additionalComments;
     private List<String> fields;
     private String sort;
-    private String sortTypes;
+    private String sortType;
 }
