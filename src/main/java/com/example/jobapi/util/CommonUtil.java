@@ -12,10 +12,7 @@ import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class CommonUtil {
     public static String convertToJson(Object input, List<String> fields) throws JsonProcessingException {
@@ -93,5 +90,15 @@ public class CommonUtil {
         }
 
         return fieldNames;
+    }
+
+    public static boolean validateFieldNames(Class<?> clazz, List<String> fieldNames) {
+        // Get declared field names of the class
+        List<String> declaredFieldNames = Arrays.stream(clazz.getDeclaredFields())
+                .map(java.lang.reflect.Field::getName)
+                .toList();
+
+        // Check if the field names match
+        return declaredFieldNames.containsAll(fieldNames);
     }
 }

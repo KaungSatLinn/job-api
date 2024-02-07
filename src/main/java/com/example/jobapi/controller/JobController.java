@@ -1,30 +1,22 @@
 package com.example.jobapi.controller;
 
 import com.example.jobapi.dto.JobDto;
+import com.example.jobapi.enums.ErrorResponseCode;
+import com.example.jobapi.enums.SuccessResponseCode;
 import com.example.jobapi.mapper.JobMapper;
 import com.example.jobapi.model.Job;
-import com.example.jobapi.response.ApiResponse;
 import com.example.jobapi.service.JobService;
 import com.example.jobapi.util.CommonUtil;
-import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.MapperFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializerProvider;
-import com.fasterxml.jackson.databind.ser.BeanPropertyWriter;
-import com.fasterxml.jackson.databind.ser.FilterProvider;
-import com.fasterxml.jackson.databind.ser.PropertyFilter;
-import com.fasterxml.jackson.databind.ser.PropertyWriter;
-import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
-import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -50,6 +42,20 @@ public class JobController extends BaseController {
         if (fields == null || fields.isEmpty()) {
             fields = CommonUtil.getFieldNames(Job.class);
         }
+        if(!CommonUtil.validateFieldNames(Job.class, fields)){
+            Map<String, List<String>> expectedFields =  new HashMap<>();
+            expectedFields.put("ExpectedFields", CommonUtil.getFieldNames(Job.class));
+            return badRequestResponse(ErrorResponseCode.ER_001, expectedFields);
+        }
+        if(sort!=null && !sort.isEmpty()){
+            List<String> sortFields = new ArrayList<>();
+            sortFields.add(sort);
+            if(!CommonUtil.validateFieldNames(Job.class, sortFields)){
+                Map<String, List<String>> expectedFields =  new HashMap<>();
+                expectedFields.put("ExpectedFields", CommonUtil.getFieldNames(Job.class));
+                return badRequestResponse(ErrorResponseCode.ER_001, expectedFields);
+            }
+        }
 
         JobDto dto = jobMapper.toJobDto(salary, salaryComparison, jobTitle, gender, fields, sort, sortType);
 
@@ -57,6 +63,6 @@ public class JobController extends BaseController {
 
         List<Map<String, Object>> resultList = CommonUtil.convertToMapList(jobs, fields);
 
-        return okResponse("list.retrieve.success", resultList);
+        return okResponse(SuccessResponseCode.JA_001, resultList);
     }
 }

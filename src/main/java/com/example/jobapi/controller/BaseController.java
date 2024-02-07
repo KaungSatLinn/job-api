@@ -1,22 +1,32 @@
 package com.example.jobapi.controller;
 
+import com.example.jobapi.enums.ApiStatus;
 import com.example.jobapi.response.ApiResponse;
-import com.example.jobapi.service.JobService;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.Map;
 
 @RestController
 public class BaseController {
 
-    protected ResponseEntity<?> okResponse(String message, List<?> data) {
+    protected ResponseEntity<?> okResponse(Enum code, List<?> data) {
         ApiResponse<List<?>> responses = ApiResponse.<List<?>>builder()
-                .message(message)
+                .code(code.name())
+                .message(code.toString())
                 .data(data)
                 .build();
         return ResponseEntity.ok(responses);
+    }
+
+    protected ResponseEntity<ApiResponse<?>> badRequestResponse(Enum code, Object data) {
+        ApiResponse<?> response = ApiResponse.<Object>builder()
+                .status(ApiStatus.FAIL.name())
+                .code(code.name())
+                .message(code.toString())
+                .data(data)
+                .build();
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
 }
